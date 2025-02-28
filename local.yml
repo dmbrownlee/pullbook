@@ -1,0 +1,6 @@
+- name: Generic pullbook
+  hosts: localhost
+  tasks:
+    - name: Testing
+      debug:
+        var: ansible_facts
