@@ -1,6 +1,20 @@
 - name: Generic pullbook
   hosts: localhost
   tasks:
-    - name: Testing
-      debug:
-        var: ansible_facts
+    - name: Ensure private group for local admin user exists
+      ansible.builtin.group:
+        name: "{{ username }}"
+        gid: "{{ gid | default(omit) }}"
+      when: username is defined
+    - name: Ensure local admin user is configured
+      ansible.builtin.user:
+        name: "{{ username }}"
+        comment: "{{ gecos | default(omit) }}"
+        uid: "{{ uid | default(omit) }}"
+        group: "{{ username }}"
+        groups: wheel
+        append: true
+        shell: /bin/bash
+        password: "{{ password | default(omit) }}"
+        update_password: on_create
+      when: username is defined
