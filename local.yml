@@ -15,6 +15,6 @@
         groups: wheel
         append: true
         shell: /bin/bash
-        password: "{{ password | default(omit) }}"
+        password: "{{ password  | password_hash('sha512') | default(omit) }}"
         update_password: on_create
       when: username is defined
