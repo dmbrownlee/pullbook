@@ -1,5 +1,7 @@
 - name: Generic pullbook
   hosts: localhost
+  vars_files:
+    - /root/ansible-pull.vars
   tasks:
     - name: Ensure private group for local admin user exists
       ansible.builtin.group:
