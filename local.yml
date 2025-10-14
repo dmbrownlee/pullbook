@@ -20,3 +20,11 @@
         password: "{{ password  | password_hash('sha512') | default(omit) }}"
         update_password: on_create
       when: username is defined
+    - name: Ensure local admin user's SSH key is authorized
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ key }}"
+      when:
+        - username is defined
+        - key is defined
