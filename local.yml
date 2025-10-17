@@ -14,12 +14,17 @@
         comment: "{{ gecos | default(omit) }}"
         uid: "{{ uid | default(omit) }}"
         group: "{{ username }}"
-        groups: wheel
-        append: true
         shell: /bin/bash
         password: "{{ password  | password_hash('sha512') | default(omit) }}"
         update_password: on_create
       when: username is defined
+    - name: Ensure local user can sudo
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/{{ username }}
+        content: "{{ username }} ALL=(ALL:ALL) ALL"
+        owner: root
+        group: root
+        mode: '0440'
     - name: Ensure local admin user has an SSH config directory
       ansible.builtin.file:
         path: /home/{{ username }}/.ssh
