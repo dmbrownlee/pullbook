@@ -20,11 +20,24 @@
         password: "{{ password  | password_hash('sha512') | default(omit) }}"
         update_password: on_create
       when: username is defined
+    - name: Ensure local admin user has an SSH config directory
+      ansible.builtin.file:
+        path: /home/{{ username }}/.ssh
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0700'
+      when:
+        - username is defined
+        - key is defined
     - name: Ensure local admin user's SSH key is authorized
-      ansible.posix.authorized_key:
-        user: "{{ username }}"
-        state: present
-        key: "{{ key }}"
+      ansible.builtin.lineinfile:
+        path: /home/{{ username }}/.ssh/authorized_keys
+        line: "{{ key }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0600'
+        create: true
       when:
         - username is defined
         - key is defined
