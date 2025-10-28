@@ -49,6 +49,21 @@
         - key is defined
     - name: Ensure local user has a bashrc with aliases
       ansible.builtin.blockinfile:
+        path: /home/{{ username }}/.profile
+        block: |
+          if [ -n "$BASH_VERSION" ]; then
+            if [ -f "$HOME/.bashrc" ]; then
+              . "$HOME/.bashrc"
+            fi
+          fi
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
+        create: true
+      when:
+        - username is defined
+    - name: Ensure local user has a bashrc with aliases
+      ansible.builtin.blockinfile:
         path: /home/{{ username }}/.bashrc
         block: |
           if [[ -x /usr/bin/kubectl ]]; then
@@ -79,7 +94,7 @@
           alias kubereconfig='ansible-playbook -e tf_workspace=$(tofu workspace show) ansible/playbook-update-local-kubeconfig.yml'
         owner: "{{ username }}"
         group: "{{ username }}"
-        mode: '0440'
+        mode: '0644'
         create: true
       when:
         - username is defined
