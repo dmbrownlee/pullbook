@@ -47,7 +47,7 @@
       when:
         - username is defined
         - key is defined
-    - name: Ensure local user has a bashrc with aliases
+    - name: Ensure local user has a .profile that sources .bashrc
       ansible.builtin.blockinfile:
         path: /home/{{ username }}/.profile
         block: |
@@ -62,7 +62,7 @@
         create: true
       when:
         - username is defined
-    - name: Ensure local user has a bashrc with aliases
+    - name: Ensure local user has a .bashrc with aliases
       ansible.builtin.blockinfile:
         path: /home/{{ username }}/.bashrc
         block: |
