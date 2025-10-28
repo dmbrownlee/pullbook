@@ -92,6 +92,8 @@
           alias pbv='ansible-playbook -vvv -e tf_workspace=$(tofu workspace show)'
           alias pbs='ansible-playbook --step -e tf_workspace=$(tofu workspace show)'
           alias kubereconfig='ansible-playbook -e tf_workspace=$(tofu workspace show) ansible/playbook-update-local-kubeconfig.yml'
+          alias vim=nvim
+          alias vimdiff='nvim -d'
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: '0644'
