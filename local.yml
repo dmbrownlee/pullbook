@@ -109,7 +109,7 @@
         - username is defined
     - name: Ensure the public key for ansible has correct ownership
       ansible.builtin.file:
-        path: /home/{{ username }}/.ssh
+        path: /home/{{ username }}/.ssh/ansible.pub
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: '0600'
