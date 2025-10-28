@@ -98,3 +98,20 @@
         create: true
       when:
         - username is defined
+    - name: Ensure the public key for ansible exists
+      ansible.builtin.shell:
+      args:
+        cmd: grep ansible authorized_keys > ansible.pub
+        chdir: /home/{{ username }}/.ssh
+        creates: /home/{{ username }}/.ssh/ansible.pub
+      register: ansible_pub_key
+      when:
+        - username is defined
+    - name: Ensure the public key for ansible has correct ownership
+      ansible.builtin.file:
+        path: /home/{{ username }}/.ssh
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0600'
+      when:
+        - ansible_pub_key.changed
