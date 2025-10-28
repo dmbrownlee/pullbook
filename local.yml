@@ -1,3 +1,4 @@
+---
 - name: Generic pullbook
   hosts: localhost
   vars_files:
@@ -46,3 +47,39 @@
       when:
         - username is defined
         - key is defined
+    - name: Ensure local user has a bashrc with aliases
+      ansible.builtin.blockinfile:
+        path: /home/{{ username }}/.bashrc
+        block: |
+          if [[ -x /usr/bin/kubectl ]]; then
+            source <(kubectl completion bash)
+            alias k="kubectl"
+            complete -o default -F __start_kubectl k
+          fi
+          if [[ -x /usr/local/bin/helm ]]; then
+            source <(helm completion bash)
+          fi
+          if [[ -x /usr/local/bin/kubectl-cnpg ]]; then
+            alias kc=kubectl-cnpg
+            source <(kubectl-cnpg completion bash)
+            complete -o default -F __start_kubectl-cnpg kc
+          fi
+          export KUBECONFIG=.kube/config
+          echo KUBECONFIG: $KUBECONFIG
+          alias ta='tofu apply -var-file $(tofu workspace show).tfvars -parallelism=1'
+          alias td='tofu destroy -var-file $(tofu workspace show).tfvars'
+          alias tsl='tofu state list'
+          alias twl='tofu workspace list'
+          alias tws='tofu workspace select'
+          alias kws='ln -sf $(tofu workspace show).kubeconfig .kube/config'
+          alias ap='ansible-playbook -e tf_workspace=$(tofu workspace show) ansible/playbook.yml'
+          alias pb='ansible-playbook -e tf_workspace=$(tofu workspace show)'
+          alias pbv='ansible-playbook -vvv -e tf_workspace=$(tofu workspace show)'
+          alias pbs='ansible-playbook --step -e tf_workspace=$(tofu workspace show)'
+          alias kubereconfig='ansible-playbook -e tf_workspace=$(tofu workspace show) ansible/playbook-update-local-kubeconfig.yml'
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0440'
+        create: true
+      when:
+        - username is defined
